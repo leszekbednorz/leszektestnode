@@ -1,0 +1,44 @@
+{
+  "name": "eng-template",
+  "private": "true",
+  "bolt": {
+    "workspaces": [
+      "backend",
+      "frontend",
+      "integration-test"
+    ]
+  },
+  "scripts": {
+    "install-all": "npm install && workspaces-run -- npm install --",
+    "ci-all": "npm ci && workspaces-run -- npm ci --",
+    "clean": "workspaces-run --parallel -- npm run clean --",
+    "lint": "workspaces-run --parallel -- npm run lint --",
+    "build": "workspaces-run --parallel --order-by-deps -- npm run build --",
+    "analyze": "workspaces-run --parallel -- npm run analyze --",
+    "test": "workspaces-run --parallel --ignore=@app/integration-test -- npm run test --",
+    "deploy": "workspaces-run --parallel -- npm run deploy --",
+    "undeploy": "workspaces-run --parallel -- npm run undeploy --",
+    "integration-test": "workspaces-run --only=@app/integration-test -- npm run test --",
+    "loc": "cloc --config cloc-options.txt ."
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@trilogy-group/eslint-config": "1.0.6",
+    "@tsconfig/node14": "1.0.0",
+    "@typescript-eslint/eslint-plugin": "4.14.0",
+    "@typescript-eslint/parser": "4.13.0",
+    "cloc": "2.7.0",
+    "eslint": "7.18.0",
+    "eslint-config-standard": "16.0.2",
+    "eslint-config-standard-with-typescript": "19.0.1",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.1.0",
+    "typescript": "4.1.3",
+    "workspaces-run": "1.0.1"
+  }
+}

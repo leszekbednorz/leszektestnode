@@ -1,0 +1,25 @@
+{
+  "app": "node build/js/iac/main",
+  "output": "build/cdk.out",
+  "context": {
+    "prefix": "",
+    "versioned": false,
+    "dynamodb-table-name": "sample-table",
+    "dynamodb-table-pk-name": "pk",
+    "dynamodb-table-sk-name": "sk",
+    "graphql-access-token-measure": "days",
+    "graphql-access-token-validity": "1",
+    "graphql-explicit-auth-flows": "ALLOW_ADMIN_USER_PASSWORD_AUTH,ALLOW_REFRESH_TOKEN_AUTH,ALLOW_USER_SRP_AUTH,ALLOW_USER_PASSWORD_AUTH",
+    "graphql-id-token-measure": "days",
+    "graphql-id-token-validity": "1",
+    "graphql-refresh-token-measure": "days",
+    "graphql-refresh-token-validity": "3",
+    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true",
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true,
+    "@aws-cdk/aws-secretsmanager:parseOwnedSecretName": true,
+    "@aws-cdk/aws-kms:defaultKeyPolicies": true,
+    "@aws-cdk/core:newStyleStackSynthesis": true
+  }
+}

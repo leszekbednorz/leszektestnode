@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+
+  "tempDirName": "build/stryker",
+  "tempDirName_comment": "Rename tmp dir to fix a Windows issue: https://git.io/JtZb8",
+
+  "reporters": ["clear-text", "progress", "html", "json"],
+  "htmlReporter": { "baseDir": "build/report/mutation" },
+  "jsonReporter": { "fileName": "build/report/mutation/mutation.json" },
+
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.stryker.json",
+
+  "testRunner": "jest",
+  "coverageAnalysis": "perTest",
+  "timeoutMS": 10000,
+  "jest": {
+    "configFile": "jest.config.json",
+    "enableFindRelatedTests": true
+  },
+
+  "mutate": [
+    "src/**/*.ts",
+    "!**/*.spec.ts",
+    "!**/*.iac.ts",
+    "!**/{iac,resolvers}/**"
+  ]
+}

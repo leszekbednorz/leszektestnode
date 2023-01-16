@@ -1,0 +1,53 @@
+name: Demo
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened, synchronize, closed]
+
+# Environment variables can be overridden in .github/env/demo
+env:
+  GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
+  GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+
+jobs:
+  demo:
+    name: Demo
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: .github/env/demo
+          expand: 'true'
+          expandWithJobEnv: 'true'
+      - name: Check settings
+        if: env.DEPLOY_ROLE == null
+        run: echo "::error ::AWS is not setup; exit 1
+      - name: Install dependencies
+        uses: trilogy-group/action-npm-install-dependencies@v1
+      - name: Build
+        run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy
+        if: github.event.action != 'closed'
+        run: npm run deploy -- -c prefix=${{ env.AWS_STACK_PREFIX }} -c removal-policy=destroy --all
+      - name: Add demo link
+        if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
+        run: |
+          url=$(aws cloudformation describe-stacks --stack-name ${{ env.AWS_STACK_PREFIX }}-persistent-stack --query 'Stacks[0].Outputs[? OutputKey==`FrontendUrl` || OutputKey==`Url`] | [0].OutputValue' --output text)
+          [[ $url == "*://*" ]] || url=http://$url
+          gh pr comment ${{ github.event.number }} --body "See a [demo of pull request ${{ github.event.number }}]($url)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Destroy
+        if: github.event.action == 'closed'
+        run: npm run undeploy -- -c prefix=${{ env.AWS_STACK_PREFIX }} --all

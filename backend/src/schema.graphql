@@ -1,0 +1,27 @@
+schema {
+  query: Query
+}
+
+type Query {
+  GetPet(id: ID!): Pet
+  GetPerson(id: ID!): Person
+  ListPets: [Pet]
+  ListPersons: [Person]
+  HelloWorldFromDynamo: ID!
+  HelloWorldFromLambda: HelloWorldOutput!
+}
+
+type Pet {
+  id: ID!
+  name: String!
+  owner: Person
+}
+
+type Person {
+  id: ID!
+  name: String!
+}
+
+type HelloWorldOutput {
+  message: String!
+}

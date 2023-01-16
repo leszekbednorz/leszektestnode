@@ -1,0 +1,37 @@
+image: devfactory/workspace-full:latest
+
+tasks:
+  - before: |
+      npm config set @trilogy-group:registry https://npm.pkg.github.com/
+      npm config set //npm.pkg.github.com/:_authToken '${GITHUB_TOKEN}'
+      if [ -z "$GITHUB_TOKEN" ]; then
+        echo "GITHUB_TOKEN is not set, you won't be able to install private dependencies"
+      fi
+      
+    init: |
+      npm run ci-all
+      npm run build
+    command: |
+      aws configure set region us-east-1
+      aws configure set output json
+      if [ -z "$AWS_ACCESS_KEY_ID" -o -z "$AWS_SECRET_ACCESS_KEY" ]; then
+        echo "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are not set, you won't be able to deploy"
+      else
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY      
+      fi
+      
+      # validate
+      if [ "$GITHUB_TOKEN" -a "$AWS_ACCESS_KEY_ID" -a "$AWS_SECRET_ACCESS_KEY" ]; then
+        echo '🚀 Ready!'
+      else
+        echo -e 'Set variables here: https://trilogy.devspaces.com/variables\n🛑 Not Ready!'
+      fi
+      
+vscode:
+  extensions:
+    - amazonwebservices.aws-toolkit-vscode
+    - graphql.vscode-graphql
+    - dbaeumer.vscode-eslint
+    - streetsidesoftware.code-spell-checker
+    - eamodio.gitlens

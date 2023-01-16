@@ -1,0 +1,35 @@
+{
+  "name": "@app/integration-test",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "shx rm -rf build",
+    "lint": "eslint --fix src --ext .ts --quiet --no-error-on-unmatched-pattern",
+    "analyze": "run-p analyze:*",
+    "analyze:lint": "eslint src --ext .ts --quiet --no-error-on-unmatched-pattern",
+    "build": "npm -v",
+    "test": "run-s test:*",
+    "test:seed-data": "ts-node ./bin/seeder.ts ./seed-data.json",
+    "test:run": "jest",
+    "deploy": "npm -v",
+    "undeploy": "npm -v"
+  },
+  "devDependencies": {
+    "@apollo/client": "3.3.11",
+    "@app/backend": "file:../backend",
+    "@types/lodash.chunk": "4.2.6",
+    "@types/jest": "27.0.2",
+    "apollo-boost": "0.4.9",
+    "aws-appsync-auth-link": "3.0.4",
+    "aws-sdk": "2.831.0",
+    "cross-fetch": "3.1.5",
+    "graphql": "15.5.0",
+    "jest": "27.3.1",
+    "lodash.chunk": "4.2.0",
+    "npm-run-all": "4.1.5",
+    "ts-jest": "27.0.7",
+    "ts-node": "9.1.1",
+    "typescript": "4.1.3"
+  },
+  "dependencies": {}
+}

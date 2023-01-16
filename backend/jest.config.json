@@ -1,0 +1,11 @@
+{
+  "roots": ["<rootDir>/src"],
+  "testEnvironment": "node",
+  "moduleNameMapper": {"^(.*)\\.js$": "$1"},
+  "collectCoverage": false,
+  "clearMocks": true,
+  "restoreMocks": true,
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@trilogy-group).+\\.js$"
+  ]
+}

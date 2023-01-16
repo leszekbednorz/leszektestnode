@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "email": "admin@example.com",
+      "firstName": "Admin",
+      "lastName": "A",
+      "initials": "AA",
+      "suspended": false,
+      "avatarColor": "#FF0000",
+      "isAdmin": true
+    },
+    {
+      "email": "user.a@example.com",
+      "firstName": "User",
+      "lastName": "A",
+      "initials": "UA",
+      "suspended": false,
+      "avatarColor": "#FF0000"
+    },
+    {
+      "email": "user.b@example.com",
+      "firstName": "User",
+      "lastName": "B",
+      "initials": "UB",
+      "suspended": false,
+      "avatarColor": "#FF0000"
+    },
+    {
+      "email": "user.c@example.com",
+      "firstName": "User",
+      "lastName": "C",
+      "initials": "UC",
+      "suspended": false,
+      "avatarColor": "#FF0000"
+    }
+  ],
+  "organizations": [
+    {
+      "organizationId": "org-a",
+      "name": "Org A",
+      "members": [
+        "admin@example.com",
+        "user.a@example.com",
+        "user.b@example.com"
+      ]
+    },
+    {
+      "organizationId": "org-b",
+      "name": "Org B"
+    },
+    {
+      "organizationId": "org-c",
+      "name": "Org C"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+#DEPLOY_ROLE=arn:aws:iam::000000000000:role/github-cicd
+AWS_REGION=us-east-1
+AWS_STACK_PREFIX=demo-$GITHUB_EVENT_NUMBER

@@ -1,0 +1,77 @@
+# This workflow verifies the quality of pull requests.
+# It covers three parallel checks: Analyze, Test and Integration test
+
+name: Verify
+
+on:
+  push:
+    tags-ignore:
+      - '**'
+    branches-ignore:
+      - 'main'
+  workflow_dispatch:
+
+# Environment variables can be overridden in .github/env/ci
+env:
+  GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
+  GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+
+jobs:
+
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: trilogy-group/action-npm-install-dependencies@v1
+      - name: Build
+        run: npm run build
+      - name: Analyze
+        run: npm run analyze
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: trilogy-group/action-npm-install-dependencies@v1
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test
+
+  integration-test:
+    name: Integration test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: .github/env/ci
+          expand: 'true'
+          expandWithJobEnv: 'true'
+      - name: Check settings
+        if: env.DEPLOY_ROLE == null
+        run: echo "::error ::AWS is not setup; exit 1
+      - name: Install dependencies
+        uses: trilogy-group/action-npm-install-dependencies@v1
+      - name: Build
+        run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy
+        id: deploy
+        run: npm run deploy -- -c prefix=it-${{ env.AWS_STACK_PREFIX }} -c removal-policy=destroy --all
+      - name: Integration test
+        run: npm run integration-test
+      - name: Destroy
+        run: npm run undeploy -- -c prefix=it-${{ env.AWS_STACK_PREFIX }} --all
+        if: always() && steps.deploy.outcome != 'skipped'

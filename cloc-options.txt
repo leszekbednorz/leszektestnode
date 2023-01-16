@@ -1,0 +1,14 @@
+# For more configuration: https://www.mankier.com/1/cloc#Options
+
+# Uncomment this option to debug
+# --by-file
+
+# enable regex filtering
+--fullpath
+
+# exclude directories
+--not-match-d=(.idea|.git|.github|.gradle|.vscode|node_modules|build|cdk.out|stryker-tmp|backend/reports)
+
+# exclude files
+--not-match-f=(package-lock.json)
+--progress-rate=100

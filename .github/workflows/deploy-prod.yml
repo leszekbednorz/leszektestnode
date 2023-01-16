@@ -1,0 +1,48 @@
+# This workflow deploys main to production.
+
+name: Deploy to Production
+
+on:
+  push:
+    tags-ignore:
+      - '**'
+    branches:
+      - 'main'
+  workflow_dispatch:
+    branches:
+      - '**'
+
+# Environment variables can be overridden in .github/env/prod
+env:
+  GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
+  GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+
+jobs:
+  deploy-prod:
+    name: Deploy to Production
+    if: github.repository != 'trilogy-group/eng-template'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: .github/env/prod
+          expand: 'true'
+          expandWithJobEnv: 'true'
+      - name: Check settings
+        if: env.DEPLOY_ROLE == null
+        run: echo "::error ::AWS is not setup; exit 1
+      - name: Install dependencies
+        uses: trilogy-group/action-npm-install-dependencies@v1
+      - name: Build
+        run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Deploy
+        run: npm run deploy -- -c prefix=${{ env.AWS_STACK_PREFIX }} -c versioned=true -c removal-policy= --all
